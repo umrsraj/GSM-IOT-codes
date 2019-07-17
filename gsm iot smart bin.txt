@@ -1,0 +1,505 @@
+#include<LiquidCrystal.h>
+#include <SoftwareSerial.h>
+
+#define trigPin A2
+#define echoPin A3
+
+//#define trigPin1 A4
+//#define echoPin1 A5
+
+#define buzzer 9
+
+SoftwareSerial SIM900(11,12);
+char data1[11],data2[11];
+int val;
+
+/*#define m1a A0
+#define m1b A1
+#define m2a A2
+#define m2b A3
+
+
+
+void forward(void)
+{
+  digitalWrite(m1a, HIGH); 
+  digitalWrite(m1b, LOW);   
+  digitalWrite(m2a, HIGH); 
+  digitalWrite(m2b, LOW); 
+ // delay(1000);               
+}
+
+void backward(void)
+{
+  digitalWrite(m1a, LOW); 
+  digitalWrite(m1b, HIGH);   
+  digitalWrite(m2a, LOW); 
+  digitalWrite(m2b, HIGH); 
+ // delay(1000);               
+}
+
+void left(void)
+{
+  digitalWrite(m1a, HIGH); 
+  digitalWrite(m1b, LOW);   
+  digitalWrite(m2a, LOW); 
+  digitalWrite(m2b, HIGH); 
+  //delay(1000);               
+}
+
+void right(void)
+{
+  digitalWrite(m1a, LOW); 
+  digitalWrite(m1b, HIGH);   
+  digitalWrite(m2a, HIGH); 
+  digitalWrite(m2b, LOW); 
+  //delay(1000);               
+}
+
+void stop_motor(void)
+{
+  digitalWrite(m1a, LOW); 
+  digitalWrite(m1b, LOW);   
+  digitalWrite(m2a, LOW); 
+  digitalWrite(m2b, LOW); 
+  //delay(1000);               
+}
+
+
+
+*/
+void beep()
+{
+   digitalWrite(buzzer, HIGH); 
+   delay(1000);
+    digitalWrite(buzzer, LOW); 
+    delay(1000);
+}
+
+
+LiquidCrystal lcd(2,3,4,5,6,7);
+int sound = 250;
+int flag=0,count=0;
+char input[12];  
+
+
+
+
+
+
+
+
+void setup() {
+  Serial.begin (9600);
+  SIM900.begin(9600);
+   pinMode(buzzer, OUTPUT);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+//  pinMode(trigPin1, OUTPUT);
+ // pinMode(echoPin1, INPUT);
+/*
+pinMode(m1a,OUTPUT);
+  pinMode(m1b,OUTPUT);
+  pinMode(m2a,OUTPUT);
+  pinMode(m2b,OUTPUT);  */
+ // pinMode(trigPin1, OUTPUT);
+ 
+//attachInterrupt(0,lswitch, LOW);
+  lcd.begin(16,2);
+        lcd.setCursor(0,0);
+        lcd.print(" GARBAGE LEVEL ");
+        lcd.setCursor(0,1);
+         lcd.print("***  METER ***");
+          Serial.print("ULTRASONIC SENSOR  ");
+         Serial.print(" ***  RADER   ***");
+         delay(2000);
+          lcd.clear ();
+      
+ sms2();
+ beep ();
+}
+
+  long duration, distance,duration1,distance1;
+
+
+
+
+void sms2()
+{
+  lcd.setCursor(0,0);
+        lcd.print("sending sms.......... ");
+ SIM900.print("AT\r\n");
+        SIM900.print('\n');
+        ShowSerialData();
+        delay(3000);
+        SIM900.print("ATE1\r\n");
+        ShowSerialData();
+        delay(3000);
+       SIM900.print("AT&W\r\n");
+        SIM900.print('\n');
+        ShowSerialData();
+        delay(3000);
+        SIM900.print("AT+CMGF=1\r\n");
+        ShowSerialData();
+        delay(3000);
+        SIM900.print("AT+CNMI=2,2,0,0,0\r\n");
+        ShowSerialData();
+        delay(2000);
+       // Serial.print("AT+CSMP=17,167,0,0\n");
+        delay(2000); 
+        SIM900.print("AT+CMGS=\"09963114371\"\r");
+        ShowSerialData();
+       // Serial.print('"');
+      //Serial.print("9014449822");
+      //Serial.print('"');
+      //Serial.print('\r');
+        SIM900.print('\n');
+        delay(1000);
+        SIM900.print("IOT BASED GARBAGE MONITORING SYSTEM  \n");
+       // SIM900.print("EMPTY \n");
+     SIM900.print('\r');
+      SIM900.print('\n');
+      
+     delay(3000);
+       SIM900.print((char)26);
+       ShowSerialData();
+       lcd.setCursor(0,0);
+        lcd.print("****sms sent****");
+        delay(5000);
+        
+}
+
+void sms1()
+{
+     lcd.setCursor(0,0);
+        lcd.print("sending sms.......... ");
+ 
+     SIM900.print("AT\r\n");
+        SIM900.print('\n');
+        ShowSerialData();
+        delay(3000);
+        SIM900.print("ATE1\r\n");
+        ShowSerialData();
+        delay(3000);
+       SIM900.print("AT&W\r\n");
+        SIM900.print('\n');
+        ShowSerialData();
+        delay(3000);
+        SIM900.print("AT+CMGF=1\r\n");
+        ShowSerialData();
+        delay(3000);
+        SIM900.print("AT+CNMI=2,2,0,0,0\r\n");
+        ShowSerialData();
+        delay(2000);
+       // Serial.print("AT+CSMP=17,167,0,0\n");
+        delay(2000); 
+        SIM900.print("AT+CMGS=\"09963114371\"\r");
+        ShowSerialData();
+       // Serial.print('"');
+      //Serial.print("9014449822");
+      //Serial.print('"');
+      //Serial.print('\r');
+        SIM900.print('\n');
+        delay(1000);
+        SIM900.print("GARBAGE FULL \n");
+         SIM900.print("COLLECT AT FIRST FLOOR ,TKR NEW CAMPUS,MEERPET\n");
+     SIM900.print('\r');
+      SIM900.print('\n');
+      
+     delay(3000);
+       SIM900.print((char)26);
+       ShowSerialData();
+         lcd.setCursor(0,0);
+       lcd.print("****sms sent****");
+        delay(5000);
+}
+
+
+void sms4()
+{
+     lcd.setCursor(0,0);
+        lcd.print("sending sms.......... ");
+ 
+     SIM900.print("AT\r\n");
+        SIM900.print('\n');
+        ShowSerialData();
+        delay(3000);
+        SIM900.print("ATE1\r\n");
+        ShowSerialData();
+        delay(3000);
+       SIM900.print("AT&W\r\n");
+        SIM900.print('\n');
+        ShowSerialData();
+        delay(3000);
+        SIM900.print("AT+CMGF=1\r\n");
+        ShowSerialData();
+        delay(3000);
+        SIM900.print("AT+CNMI=2,2,0,0,0\r\n");
+        ShowSerialData();
+        delay(2000);
+       // Serial.print("AT+CSMP=17,167,0,0\n");
+        delay(2000); 
+        SIM900.print("AT+CMGS=\"09963114371\"\r");
+        ShowSerialData();
+       // Serial.print('"');
+      //Serial.print("9014449822");
+      //Serial.print('"');
+      //Serial.print('\r');
+        SIM900.print('\n');
+        delay(1000);
+        SIM900.print("MEDIUM  \n");
+     SIM900.print('\r');
+      SIM900.print('\n');
+      
+     delay(3000);
+       SIM900.print((char)26);
+       ShowSerialData();
+         lcd.setCursor(0,0);
+       lcd.print("****sms sent****");
+        delay(5000);
+}
+
+void sms3()
+{
+     lcd.setCursor(0,0);
+        lcd.print("sending sms.......... ");
+ 
+     SIM900.print("AT\r\n");
+        SIM900.print('\n');
+        ShowSerialData();
+        delay(3000);
+        SIM900.print("ATE1\r\n");
+        ShowSerialData();
+        delay(3000);
+       SIM900.print("AT&W\r\n");
+        SIM900.print('\n');
+        ShowSerialData();
+        delay(3000);
+        SIM900.print("AT+CMGF=1\r\n");
+        ShowSerialData();
+        delay(3000);
+        SIM900.print("AT+CNMI=2,2,0,0,0\r\n");
+        ShowSerialData();
+        delay(2000);
+       // Serial.print("AT+CSMP=17,167,0,0\n");
+        delay(2000); 
+        SIM900.print("AT+CMGS=\"09963114371\"\r");
+        ShowSerialData();
+       // Serial.print('"');
+      //Serial.print("9014449822");
+      //Serial.print('"');
+      //Serial.print('\r');
+        SIM900.print('\n');
+        delay(1000);
+        SIM900.print("EMPTY    \n");
+     SIM900.print('\r');
+      SIM900.print('\n');
+      
+     delay(3000);
+       SIM900.print((char)26);
+       ShowSerialData();
+         lcd.setCursor(0,0);
+       lcd.print("****sms sent****");
+        delay(5000);
+}
+
+
+void sms5()
+{
+     lcd.setCursor(0,0);
+        lcd.print("sending sms.......... ");
+ 
+     SIM900.print("AT\r\n");
+        SIM900.print('\n');
+        ShowSerialData();
+        delay(3000);
+        SIM900.print("ATE1\r\n");
+        ShowSerialData();
+        delay(3000);
+       SIM900.print("AT&W\r\n");
+        SIM900.print('\n');
+        ShowSerialData();
+        delay(3000);
+        SIM900.print("AT+CMGF=1\r\n");
+        ShowSerialData();
+        delay(3000);
+        SIM900.print("AT+CNMI=2,2,0,0,0\r\n");
+        ShowSerialData();
+        delay(2000);
+       // Serial.print("AT+CSMP=17,167,0,0\n");
+        delay(2000); 
+        SIM900.print("AT+CMGS=\"09963114371\"\r");
+        ShowSerialData();
+       // Serial.print('"');
+      //Serial.print("9014449822");
+      //Serial.print('"');
+      //Serial.print('\r');
+        SIM900.print('\n');
+        delay(1000);
+        SIM900.print("GAS DETECTED \n");
+     SIM900.print('\r');
+      SIM900.print('\n');
+      
+     delay(3000);
+       SIM900.print((char)26);
+       ShowSerialData();
+         lcd.setCursor(0,0);
+       lcd.print("****sms sent****");
+        delay(5000);
+}
+
+
+
+
+void loop() {
+
+
+//forward();
+//while(1)
+{
+    digitalWrite(trigPin, LOW); 
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  distance = (duration/2) / 29.1;
+
+Serial.print("distance--- "); Serial.println(distance);
+
+ if(distance>220)
+ {
+  distance=220;
+ }
+ lcd.clear ();
+
+       lcd.setCursor(0,0);
+        lcd.print("Distance =");
+         lcd.print(distance);
+         lcd.print(" cm  ");
+         
+
+        
+         //rial.print("obstacle detected");
+         Serial.print(" Distance =");
+         Serial.print(distance);
+         Serial.print(" cm\n");
+//Serial.print(val);
+
+}
+/*
+if(val>500)
+{
+    lcd.setCursor(0,0);
+        lcd.print("GAS DETECTED");
+ //    strcpy(data2,"HIGH");
+     sms5();
+     
+}
+*/
+      if(distance>30)
+      {
+          lcd.setCursor(0,1);
+        lcd.print("EMPTY            ");
+        //strcpy(data1,"EMPTY");
+        beep();
+        sms3();
+      }
+      else if(distance>20&&distance<30)
+      {
+         lcd.setCursor(0,1);
+        lcd.print("MEDIUM      ");
+        // strcpy(data1,"MEDIUM   ");
+      beep();
+      beep();
+  //    beep();
+      sms4();
+      }
+     else if(distance<10)
+         {
+         // stop_motor();
+           //beep();
+           delay(100);
+           beep();
+           beep();
+           beep();
+           //strcpy(data1,"FULL");
+           lcd.setCursor(0,1);
+        lcd.print("FULL            ");
+       sms1();
+        
+         }
+
+//SubmitHttpRequest();  
+   }
+
+
+
+void ShowSerialData()
+{
+  while(SIM900.available()!=0)
+    Serial.write(char (SIM900.read()));
+}
+void SubmitHttpRequest()
+{
+  SIM900.println("AT"); // Signal quality check
+
+  delay(500);
+ delay(500);
+  SIM900.println("AT+CSQ"); // Signal quality check
+
+  delay(500);
+ delay(500);
+  ShowSerialData();// this code is to show the data from gprs shield, in order to easily see the process of how the gprs shield submit a http request, and the following is for this purpose too.
+  
+  SIM900.println("AT+CGATT?"); //Attach or Detach from GPRS Support
+  delay(500);
+ delay(500);
+  ShowSerialData();
+  SIM900.println("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"");//setting the SAPBR, the connection type is using gprs
+  delay(1500);
+ delay(500);
+  ShowSerialData();
+ 
+  SIM900.println("AT+SAPBR=3,1,\"APN\",\"CMNET\"");//setting the APN, Access point name string
+  delay(4000);
+ delay(500);
+  ShowSerialData();
+ 
+  SIM900.println("AT+SAPBR=1,1");//setting the SAPBR
+  delay(2500);
+ delay(500);
+  ShowSerialData();
+ 
+  SIM900.println("AT+HTTPINIT"); //init the HTTP request
+ 
+  delay(2500);delay(500); 
+  ShowSerialData();
+  
+ SIM900.print("AT+HTTPPARA=\"URL\",\"http://ambesttechnologies.com/AntiCraft/updategarbage.php?x=");
+  SIM900.print((char *)data1);
+     SIM900.println("\"");
+   delay(3000);
+   delay(9000);
+  ShowSerialData();
+delay(500);
+  delay(1000);
+
+ 
+  SIM900.println("AT+HTTPACTION=0");//submit the request 
+  delay(10000);//the delay is very important, the delay time is base on the return from the website, if the return datas are very large, the time required longer.
+  delay(500);
+  ShowSerialData();
+  
+  SIM900.println("AT+HTTPREAD");// read the data from the website you access
+  delay(300);
+  delay(500);
+  delay(500);
+  ShowSerialData();
+ 
+  SIM900.println("");
+  delay(100);delay(500);
+//  p=0;
+}
+
+
